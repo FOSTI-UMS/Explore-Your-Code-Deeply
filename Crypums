@@ -1,0 +1,164 @@
+#!/bin/bash 
+
+# Line 1 adalah Shebang, digunakan untuk menunjukkan code kita menggunakan intepreter apa
+# Fungsi banner untuk tampilan heading aja
+
+banner(){
+clear
+echo "                                 ";
+echo "  _____                           ";
+echo " |     |___ _ _ ___ _ _ _____ ___ ";
+echo " |   --|  _| | | . | | |     |_ -|";
+echo " |_____|_| |_  |  _|___|_|_|_|___|";
+echo "           |___|_|                ";
+echo
+}
+
+
+banner_decrypt(){
+clear
+echo "                               ";
+echo "  ____                      _   ";
+echo " |    \ ___ ___ ___ _ _ ___| |_ ";
+echo " |  |  | -_|  _|  _| | | . |  _|";
+echo " |____/|___|___|_| |_  |  _|_|  ";
+echo "                   |___|_|      ";
+echo
+}
+
+banner_encrypt(){
+clear
+echo "                               ";
+echo "  _____                     _   ";
+echo " |   __|___ ___ ___ _ _ ___| |_ ";
+echo " |   __|   |  _|  _| | | . |  _|";
+echo " |_____|_|_|___|_| |_  |  _|_|  ";
+echo "                   |___|_|      ";
+echo 
+}
+
+
+banner_crack(){
+clear
+echo "                       ";
+echo "  _____             _   ";
+echo " |     |___ ___ ___| |_ ";
+echo " |   --|  _| .'|  _| '_|";
+echo " |_____|_| |__,|___|_,_|";
+echo "                        ";
+echo
+}
+Function_encryption(){
+        banner_encrypt # Untuk menampilkan banner
+        echo
+        echo -n " Shift : " # mengambil inputan
+        read key # nilai inputan masuk variabel key. inputan shift atau key untuk enkripsi cesar
+        echo
+        echo -n " File To Encrypt : " # input file yang akan di enkripsi
+        read file # file enkripsi di simpan dalam variabel file
+        echo 
+        export A=$(echo {a..z} | sed -r 's/ //g') # proses enkripsi
+        export B=$(echo $A | sed -r "s/^.{$key}//g")$(echo $A | sed -r "s/.{$( expr 26 - $key )}$//g") # proses enkripsi
+        tr '[A-Z]' $A < $file | tr $A $B > tmp/msg_encrypt # menyimpan file hasil enkripsi ke folder tmp didalam file msg_encrypt
+        sleep 2 # delay 2 detik
+        echo -n " Encrypt Complete , File in  tmp folder"
+        echo
+        echo " Press any key to main menu "
+        read aw
+        main_menu # menampilkan menu
+}
+
+Function_decryption(){
+	banner_decrypt
+	echo 
+	echo "   [ 1 ] - Substitution Cipher - 02 "
+	echo "   [ 2 ] - Substitution Cipher - 13"
+	echo "   [ 3 ] - Substitution Cipher - 20"
+	echo "   [ 4 ] - Back to main menu"
+	echo  
+	echo -n " Choice Option : " # meminta input shift untuk decrypt
+	read opt_dec 
+	if test $opt_dec == '1'
+          then
+          echo
+          echo -n " File message to Decrypt : "
+          read file
+	     #cat $file | tr'[C-ZA-B]' '[A-Z]' > tmp/msg_decrypt
+	     cat $file | tr '[c-za-b]' '[a-z]' > tmp/msg_decrypt # proses dekrip dan disimpan ke tmp/msg_decrypt. tanda | seperti ; dalam python
+	    echo " Complete encrypt message "
+        elif test $opt_dec == '2'
+          then
+          echo
+          echo -n " File message to Decrypt : "
+          read file
+	    cat $file | tr '[a-z]' '[n-za-m]' > tmp/msg_decrypt
+	    echo " Complete encrypt message "  
+        elif test $opt_dec == '3'
+          then
+          echo
+          echo -n " File message to Decrypt : "
+          read file
+	     cat $file | tr '[a-z]'  '[u-za-t]' > tmp/msg_decrypt
+	     echo " Complete Decrypt message "  
+        elif test $opt_dec == '4'
+          then
+	  main_menu  
+	else
+	echo
+	echo " Incorrect Number"
+	fi
+	echo 
+	echo -n " Back to Last Menu? ( Yes / No ) :"
+	read back
+	if [ $back != 'n' ] && [ $back != 'N' ]
+	 then
+	  clear
+	main_menu
+	elif [ $back != 'y' ] && [ $back != 'Y' ] 
+	then
+		Function_decryption
+	fi
+}
+
+Function_crack(){
+        banner
+        echo
+        echo -n " File to crack: " # meminta input file yang akan di crack
+        read file # memasukkan file yang akan di crack kedalam variabel vile
+        echo 
+        filetarget=`cat $file` #variabel filetarget berisi string dalam variabel file
+        for i in $(seq 25);do # melakukan looping untuk brute force
+        echo $i $filetarget | tr $(printf %${i}s | tr ' ' '.')\a-z a-za-z
+        done
+        echo
+        echo "Complete"
+        echo
+        echo -n " Press any key to back to main menu "
+        read aw
+        main_menu
+
+}       
+
+
+
+main_menu(){
+        clear
+        banner
+        echo  "   [ 1 ] - Encrypt Message  Using Chaesar Chiper "
+        echo  "   [ 2 ] - Decrypt Message  "
+        echo  "   [ 3 ] - Crack Encrypt Message"
+        echo  "   [ 4 ] - Exit "
+        echo 
+        echo -n " Choice your option : "
+        read pilihanmu
+        case $pilihanmu in
+                1) Function_encryption;;
+                2) Function_decryption;;
+                3) Function_crack;;
+                4) Exit ;;
+                *) main_menu
+        esac
+}
+
+main_menu
+
